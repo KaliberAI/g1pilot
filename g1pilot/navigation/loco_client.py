@@ -53,13 +53,18 @@ class G1LocoClient(Node):
             10
         )
 
+        self.create_subscription(
+            Bool,
+            '/g1pilot/auto_enable',
+            self.auto_enable_callback,
+            10
+        )
+
         if self.use_robot:
             ChannelFactoryInitialize(0, interface)
             self.robot = LocoClient()
             self.robot.SetTimeout(10.0)
-            self.robot.SetFsmId(4)
             self.robot.Init()
-            self.robot.Damp()
             self.current_id = self.get_fsm_id()
             self.current_mode = self.get_fsm_mode()
             self.get_logger().info(f"Current FSM ID: {self.current_id}, Mode: {self.current_mode}")
@@ -95,6 +100,12 @@ class G1LocoClient(Node):
             logger.debug(msg)
         else:
             logger.info(msg)
+
+    def auto_enable_callback(self, msg: Bool):
+        if not msg.data:
+            if self.use_robot and self.robot is not None and self.balanced:
+                self.robot.StopMove()
+                self.get_logger().info('Auto nav disabled — StopMove sent.')
 
 
     def _clear_once(self, key):

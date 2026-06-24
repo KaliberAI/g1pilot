@@ -23,6 +23,8 @@ def generate_launch_description():
     publish_joint_states = LaunchConfiguration("publish_joint_states")
     interface = LaunchConfiguration("interface")
     sim_rate_hz = LaunchConfiguration("sim_rate_hz")
+    arm_controlled = LaunchConfiguration("arm_controlled")
+    enable_arm_ui = LaunchConfiguration("enable_arm_ui")
 
     urdf = os.path.join(
         get_package_share_directory(package_name), "description_files/urdf", urdf_file_name
@@ -43,6 +45,7 @@ def generate_launch_description():
                               description="Simulation rate when use_robot=false"),
         DeclareLaunchArgument("arm_controlled", default_value="both",
                                 description="Which arm to control: 'left', 'right', or 'both'"),
+        DeclareLaunchArgument("enable_arm_ui", default_value="true"),
 
         Node(
             package='g1pilot',
@@ -57,11 +60,16 @@ def generate_launch_description():
             output='screen'
         ),
 
+        # Locomotion client — sends commands to robot
         Node(
             package='g1pilot',
-            executable='mola_fixed',
-            name='mola_fixed',
+            executable='loco_client',
+            name='loco_client',
             parameters=[{
+                'interface': interface,
+                'use_robot': ParameterValue(use_robot, value_type=bool),
+                'arm_controlled': arm_controlled,
+                'enable_arm_ui': ParameterValue(enable_arm_ui, value_type=bool),
             }],
             output='screen'
         ),
@@ -70,7 +78,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='mid360_to_livox_tf',
-            arguments=['0','0','0','0','0','3.14159265','mid360_link','livox_frame']
+            arguments=['0','0','0','0','0','0','mid360_link','livox_frame']
         ),
 
         Node(

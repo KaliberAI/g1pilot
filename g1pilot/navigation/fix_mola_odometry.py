@@ -73,7 +73,7 @@ class FixMolaOdometry(Node):
         out.header.frame_id = self.map_frame
         out.child_frame_id = self.base_frame
 
-        px, py, pz = msg.pose.pose.position.x, -msg.pose.pose.position.y, msg.pose.pose.position.z
+        px, py, pz = msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z
         out.pose.pose.position.x = px
         out.pose.pose.position.y = py
         out.pose.pose.position.z = pz
@@ -87,7 +87,7 @@ class FixMolaOdometry(Node):
         q_out = quat_multiply(self.q_prefix, q_in)
         if self.normalize_quat:
             q_out = quat_normalize(q_out)
-        out.pose.pose.orientation = Quaternion(x=q_out[0], y=q_out[1], z=q_out[2], w=-q_out[3])
+        out.pose.pose.orientation = Quaternion(x=q_out[0], y=q_out[1], z=q_out[2], w=q_out[3])
 
         out.pose.covariance = msg.pose.covariance
         out.twist = msg.twist
