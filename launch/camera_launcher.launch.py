@@ -6,8 +6,10 @@ from launch.substitutions import LaunchConfiguration
 import os
 
 # wrapper for realsense2_camera launch file
+# ideally can set to the following values:
 # set camera_name to d435
 # set camera_namespace to /
+# set initial_reset to true
 # set rgb_camera.color_profile:=640,480,30
 # set depth_module.depth_profile:=640,480,30
 # set align_depth.enable to true
@@ -15,6 +17,16 @@ import os
 # set temporal_filter.enable to true
 # set hole_filling_filter.enable to true
 
+# for now, the usb connection is bad so we could only set to the following values:
+# camera_name:=d435 
+# camera_namespace:=/ 
+# initial_reset:=true
+# rgb_camera.color_profile:=640,480,15
+# depth_module.depth_profile:=640,480,15 
+# align_depth.enable:=false 
+# pointcloud.enable:=false 
+# temporal_filter.enable:=false 
+# hole_filling_filter.enable:=false
 
 configurable_parameters = [
     {'name': 'camera_name', 'default': 'd435', 'description': 'camera unique name'},
@@ -24,21 +36,21 @@ configurable_parameters = [
     {'name': 'device_type', 'default': "''", 'description': 'choose device by type'},
     {'name': 'config_file', 'default': "''", 'description': 'yaml config file'},
     {'name': 'json_file_path', 'default': "''", 'description': 'allows advanced configuration'},
-    {'name': 'initial_reset', 'default': 'false', 'description': "''"},
+    {'name': 'initial_reset', 'default': 'true', 'description': "''"},
     {'name': 'accelerate_gpu_with_glsl', 'default': 'false', 'description': 'enable GPU acceleration with GLSL'},
     {'name': 'rosbag_filename', 'default': "''", 'description': 'A realsense bagfile to run from as a device'},
     {'name': 'rosbag_loop', 'default': 'false', 'description': 'Enable loop playback when playing a bagfile'},
     {'name': 'log_level', 'default': 'info', 'description': 'debug log level [DEBUG|INFO|WARN|ERROR|FATAL]'},
     {'name': 'output', 'default': 'screen', 'description': 'pipe node output [screen|log]'},
     {'name': 'enable_color', 'default': 'true', 'description': 'enable color stream'},
-    {'name': 'rgb_camera.color_profile', 'default': '640,480,30', 'description': 'color stream profile'},
+    {'name': 'rgb_camera.color_profile', 'default': '640,480,15', 'description': 'color stream profile'},
     {'name': 'rgb_camera.color_format', 'default': 'RGB8', 'description': 'color stream format'},
     {'name': 'rgb_camera.enable_auto_exposure', 'default': 'true', 'description': 'enable/disable auto exposure for color image'},
     {'name': 'enable_depth', 'default': 'true', 'description': 'enable depth stream'},
     {'name': 'enable_infra', 'default': 'false', 'description': 'enable infra0 stream'},
     {'name': 'enable_infra1', 'default': 'false', 'description': 'enable infra1 stream'},
     {'name': 'enable_infra2', 'default': 'false', 'description': 'enable infra2 stream'},
-    {'name': 'depth_module.depth_profile', 'default': '640,480,30', 'description': 'depth stream profile'},
+    {'name': 'depth_module.depth_profile', 'default': '640,480,15', 'description': 'depth stream profile'},
     {'name': 'depth_module.depth_format', 'default': 'Z16', 'description': 'depth stream format'},
     {'name': 'depth_module.infra_profile', 'default': '0,0,0', 'description': 'infra streams (0/1/2) profile'},
     {'name': 'depth_module.infra_format', 'default': 'RGB8', 'description': 'infra0 stream format'},
@@ -81,9 +93,9 @@ configurable_parameters = [
     {'name': 'rotation_filter.enable', 'default': 'false', 'description': 'enable rotation filter'},
     {'name': 'rotation_filter.rotation', 'default': '0.0', 'description': 'rotation value: 0.0, 90.0, -90.0, 180.0'},
     {'name': 'spatial_filter.enable', 'default': 'false', 'description': 'enable_spatial_filter'},
-    {'name': 'temporal_filter.enable', 'default': 'true', 'description': 'enable_temporal_filter'},
+    {'name': 'temporal_filter.enable', 'default': 'false', 'description': 'enable_temporal_filter'},
     {'name': 'disparity_filter.enable', 'default': 'false', 'description': 'enable_disparity_filter'},
-    {'name': 'hole_filling_filter.enable', 'default': 'true', 'description': 'enable_hole_filling_filter'},
+    {'name': 'hole_filling_filter.enable', 'default': 'false', 'description': 'enable_hole_filling_filter'},
     {'name': 'hdr_merge.enable', 'default': 'false', 'description': 'hdr_merge filter enablement flag'},
     {'name': 'wait_for_device_timeout', 'default': '-1.', 'description': 'Timeout for waiting for device to connect (Seconds)'},
     {'name': 'reconnect_timeout', 'default': '6.', 'description': 'Timeout(seconds) between consequtive reconnection attempts'},

@@ -166,6 +166,7 @@ source setup_uri.sh <interface>
 If you are using the depth camera on the robot, once in the camera docker image, run the following command:
 ```bash
 colcon build
+source install/setup.bash 
 ```
 
 You can launch the bringup robot with the following command:
