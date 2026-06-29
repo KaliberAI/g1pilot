@@ -27,7 +27,7 @@ def generate_launch_description():
         name='MOLA_LIDAR_TOPIC', value=LaunchConfiguration('lidar_topic_name'))
     # ~~~~~~~~~~~~
     ignore_lidar_pose_from_tf_arg = DeclareLaunchArgument(
-        "ignore_lidar_pose_from_tf", default_value="true", description="If true, the LiDAR pose will be assumed to be at the origin (base_link). Set to false (default) if you want to read the actual sensor pose from /tf")
+        "ignore_lidar_pose_from_tf", default_value="false", description="If true, the LiDAR pose will be assumed to be at the origin (base_link). Set to false (default) if you want to read the actual sensor pose from /tf")
     fixed_sensorpose_env_var = SetEnvironmentVariable(
         name='MOLA_USE_FIXED_LIDAR_POSE', value=LaunchConfiguration('ignore_lidar_pose_from_tf'))
     # ~~~~~~~~~~~~
@@ -37,7 +37,7 @@ def generate_launch_description():
         name='MOLA_GNSS_TOPIC', value=LaunchConfiguration('gnss_topic_name'))
     # ~~~~~~~~~~~~
     imu_topic_name_arg = DeclareLaunchArgument(
-        "imu_topic_name", default_value="/g1pilot/imu", description="Topic name to listen for Imu input (for example '/imu')")
+        "imu_topic_name", default_value="/livox/imu", description="Topic name to listen for Imu input (for example '/imu')")
     imu_topic_env_var = SetEnvironmentVariable(
         name='MOLA_IMU_TOPIC', value=LaunchConfiguration('imu_topic_name'))
     # ~~~~~~~~~~~~
@@ -110,6 +110,14 @@ def generate_launch_description():
     mola_footprint_to_base_link_tf_env_var = SetEnvironmentVariable(
         name='MOLA_TF_FOOTPRINT_TO_BASE_LINK',
         value=LaunchConfiguration('mola_footprint_to_base_link_tf'))
+    # ~~~~~~~~~~~~
+    mola_tf_base_link_arg = DeclareLaunchArgument(
+        "mola_tf_base_link",
+        default_value="pelvis",
+        description="The /tf frame name to be used for MOLA-LO localization updates")
+    mola_tf_base_link_env_var = SetEnvironmentVariable(
+        name='MOLA_TF_BASE_LINK',
+        value=LaunchConfiguration('mola_tf_base_link'))
     # ~~~~~~~~~~~~
     enforce_planar_motion_arg = DeclareLaunchArgument(
         "enforce_planar_motion", default_value="False", description="Whether to enforce z, pitch, and roll to be zero.")
@@ -274,6 +282,8 @@ def generate_launch_description():
         mola_tf_footprint_link_env_var,
         mola_footprint_to_base_link_tf_arg,
         mola_footprint_to_base_link_tf_env_var,
+        mola_tf_base_link_arg,
+        mola_tf_base_link_env_var,
         enforce_planar_motion_arg,
         enforce_planar_motion_env_var,
         forward_ros_tf_odom_to_mola_arg,
