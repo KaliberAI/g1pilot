@@ -5,7 +5,6 @@ import time
 import numpy as np
 import array
 
-from tf2_ros import TransformBroadcaster
 from xbot2_interface import pyxbot2_interface as xbi
 from xbot2_interface import pyxbot2_collision
 from xbot2_interface import pyaffine3
@@ -14,7 +13,7 @@ import rclpy
 from rclpy.node import Node
 from rcl_interfaces.srv import GetParameters
 
-from geometry_msgs.msg import PoseStamped, TransformStamped, WrenchStamped,Point
+from geometry_msgs.msg import PoseStamped, Point
 from std_msgs.msg import Bool, Float64
 from sensor_msgs.msg import JointState
 
@@ -115,25 +114,9 @@ class G1CollisionAvoidanceNode(Node):
         self._initialized = False
         self.start_opensot = False
 
-
-
         self.client = self.create_client(GetParameters, "/robot_state_publisher/get_parameters")
         self.joint_state_publisher = self.create_publisher(JointState, "/joint_states", 10)
         self.base_height_publisher = self.create_publisher(Float64, "/base_height", 10)
-        self.base_link_broadcaster = TransformBroadcaster(self)
-
-        # statis transform between world and pelvis
-        t = TransformStamped()
-        t.header.frame_id = "world"
-        t.child_frame_id = "pelvis"
-        t.transform.translation.x = 0.0
-        t.transform.translation.y = 0.0
-        t.transform.translation.z = 0.0
-        t.transform.rotation.x = 0.0
-        t.transform.rotation.y = 0.0
-        t.transform.rotation.z = 0.0
-        t.transform.rotation.w = 1.0
-        self.base_link_broadcaster.sendTransform(t)
 
         self.start_opensot_sub = self.create_subscription(Bool, "/g1pilot/start_opensot", self.start_opensot_callback, 10)
         self.emergency_stop_sub = self.create_subscription(Bool, "/g1pilot/emergency_stop", self.emergency_stop_callback, 10)
@@ -168,8 +151,9 @@ class G1CollisionAvoidanceNode(Node):
 
         self.collision_distances_publisher = self.create_publisher(Marker, 'collision_distances', 10)
 
-        self.right_hand_frame_ref = "pelvis"
-        self.left_hand_frame_ref = "pelvis"
+        self.base_frame = "pelvis"
+        self.right_hand_frame_ref = self.base_frame
+        self.left_hand_frame_ref = self.base_frame
 
         self.motor_state = [MotorState() for _ in range(35)]
         self.lowstate_buffer = DataBuffer()
@@ -466,7 +450,7 @@ class G1CollisionAvoidanceNode(Node):
         self.get_logger().warning("Initializing OpenSoT Tasks and Constraints")
 
         self.get_logger().info("Task: Base")
-        self.base = Cartesian("base_task", self.model, "pelvis", manipulation_frame)
+        self.base = Cartesian("base_task", self.model, self.base_frame, manipulation_frame)
         self.base.setLambda(0.1)
 
         self.get_logger().info("Task: Torso")
@@ -636,23 +620,6 @@ class G1CollisionAvoidanceNode(Node):
                 self.get_logger().error(f"OpenSoT Solver Error: {e}")
                 dq = None
 
-        
-
-            t = TransformStamped()
-            t.header.frame_id = "world"
-            t.child_frame_id = "pelvis"
-            t.header.stamp = self.get_clock().now().to_msg()
-            t.transform.translation.x = self.q[0]
-            t.transform.translation.y = self.q[1]
-            t.transform.translation.z = self.q[2]
-            t.transform.rotation.x = self.q[3]
-            t.transform.rotation.y = self.q[4]
-            t.transform.rotation.z = self.q[5]
-            t.transform.rotation.w = self.q[6]
-
-            self.base_link_broadcaster.sendTransform(t)
-
-
             js = JointState()
             js.header.stamp = self.get_clock().now().to_msg()
 
@@ -737,7 +704,7 @@ class G1CollisionAvoidanceNode(Node):
         marker.pose.orientation.w = 1.0
         marker.type = Marker.LINE_LIST
         marker.action = Marker.ADD
-        marker.header.frame_id = "world"
+        marker.header.frame_id = self.base_frame
         marker.header.stamp = time
         marker.ns = "collision_distances"
         marker.id = 0
