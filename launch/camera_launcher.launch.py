@@ -8,10 +8,13 @@ import os
 # wrapper for realsense2_camera launch file
 # set camera_name to d435
 # set camera_namespace to /
+# set rgb_camera.color_profile:=640,480,30
+# set depth_module.depth_profile:=640,480,30
 # set align_depth.enable to true
 # set pointcloud.enable to true
 # set temporal_filter.enable to true
 # set hole_filling_filter.enable to true
+
 
 configurable_parameters = [
     {'name': 'camera_name', 'default': 'd435', 'description': 'camera unique name'},
@@ -28,14 +31,14 @@ configurable_parameters = [
     {'name': 'log_level', 'default': 'info', 'description': 'debug log level [DEBUG|INFO|WARN|ERROR|FATAL]'},
     {'name': 'output', 'default': 'screen', 'description': 'pipe node output [screen|log]'},
     {'name': 'enable_color', 'default': 'true', 'description': 'enable color stream'},
-    {'name': 'rgb_camera.color_profile', 'default': '0,0,0', 'description': 'color stream profile'},
+    {'name': 'rgb_camera.color_profile', 'default': '640,480,30', 'description': 'color stream profile'},
     {'name': 'rgb_camera.color_format', 'default': 'RGB8', 'description': 'color stream format'},
     {'name': 'rgb_camera.enable_auto_exposure', 'default': 'true', 'description': 'enable/disable auto exposure for color image'},
     {'name': 'enable_depth', 'default': 'true', 'description': 'enable depth stream'},
     {'name': 'enable_infra', 'default': 'false', 'description': 'enable infra0 stream'},
     {'name': 'enable_infra1', 'default': 'false', 'description': 'enable infra1 stream'},
     {'name': 'enable_infra2', 'default': 'false', 'description': 'enable infra2 stream'},
-    {'name': 'depth_module.depth_profile', 'default': '0,0,0', 'description': 'depth stream profile'},
+    {'name': 'depth_module.depth_profile', 'default': '640,480,30', 'description': 'depth stream profile'},
     {'name': 'depth_module.depth_format', 'default': 'Z16', 'description': 'depth stream format'},
     {'name': 'depth_module.infra_profile', 'default': '0,0,0', 'description': 'infra streams (0/1/2) profile'},
     {'name': 'depth_module.infra_format', 'default': 'RGB8', 'description': 'infra0 stream format'},

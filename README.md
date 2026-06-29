@@ -163,6 +163,11 @@ Also if you are connected to the robot, you need to source the way to connecto t
 source setup_uri.sh <interface>
 ``` 
 
+If you are using the depth camera on the robot, once in the camera docker image, run the following command:
+```bash
+colcon build
+```
+
 You can launch the bringup robot with the following command:
 
 ```bash
@@ -203,7 +208,7 @@ ros2 launch g1pilot teleoperation_launcher.launch.py
 
 6.- You can run the depth camera on the robot with the following command:
 ```bash
-ros2 launch realsense2_camera rs_launch.py depth_module.depth_profile:=1280x720x30 pointcloud.enable:=true
+ros2 launch g1pilot camera_launcher.launch.py
 ```
 
 For more details on how to use the package, please refer to the [instructions](docs/INSTRUCTIONS.md) document. Also you can check the [cheats](docs/CHEATS.md) document for quick commands and tips to use the package.
