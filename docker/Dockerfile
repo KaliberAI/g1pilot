@@ -7,7 +7,14 @@ ENV TZ="Europe/Paris"
 
 WORKDIR /deps
 
-RUN apt-get update && apt-get upgrade -y && apt-get clean  && apt-get install -y terminator gedit locate cmake-curses-gui python3-pip python3-venv liburdfdom-dev ros-jazzy-moveit-core
+RUN apt-get update && apt-get upgrade -y && apt-get clean  && apt-get install -y \
+    terminator gedit locate cmake-curses-gui python3-pip python3-venv \
+    liburdfdom-dev ros-jazzy-moveit-core \
+    libboost-random-dev \
+    libboost-filesystem-dev \
+    libboost-serialization-dev \
+    libboost-system-dev \
+    libboost-chrono-dev
 
 WORKDIR /home
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
@@ -81,7 +88,17 @@ RUN git clone -b devel https://github.com/ADVRHumanoids/xbot2_interface.git && \
     cd /home/forest_ws/build/xbot2_interface && \
     source /opt/ros/jazzy/setup.bash && \
     source /home/forest_ws/setup.bash && \
-    cmake -DXBOT2_IFC_BUILD_TESTS=ON -DXBOT2_IFC_BUILD_ROS=OFF -DXBOT2_IFC_BUILD_ROS2=OFF -DCMAKE_INSTALL_PREFIX:STRING=/home/forest_ws/install -DCMAKE_BUILD_TYPE:STRING=Release ../../src/xbot2_interface && \
+    cmake \
+    -DXBOT2_IFC_BUILD_TESTS=OFF \
+    -DXBOT2_IFC_BUILD_ROS=OFF \
+    -DXBOT2_IFC_BUILD_ROS2=OFF \
+    -DCMAKE_INSTALL_PREFIX:STRING=/home/forest_ws/install \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DBoost_USE_DEBUG_RUNTIME=OFF \
+    -DBoost_USE_DEBUG_LIBS=OFF \
+    -DBoost_USE_RELEASE_LIBS=ON \
+    -DBoost_USE_STATIC_LIBS=OFF \
+    ../../src/xbot2_interface && \
     make -j8 && \
     make install
 

@@ -25,6 +25,7 @@ setup(
             'launch/navigation_launcher.launch.py',
             'launch/mola_launcher.launch.py',
             'launch/livox_launcher.launch.py',
+            'launch/camera_launcher.launch.py',
             'launch/manipulation_launcher.launch.py',
 
             'launch/bringup_launcher.launch.py',
