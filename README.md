@@ -51,6 +51,44 @@ G1Pilot is an open‑source ROS 2 package for Unitree G1 humanoid robots. Basic
 - Be connected to the robot via Ethernet. **It's important to know which interface you are using.**
 
 ## Quick Start
+
+### Temporary configure G1 internet
+
+The robot does not have internet access by default. To install packages or pull updates while developing, you can share your host PC's connection over the Ethernet link using the scripts in `helper_scripts/`.
+
+**1. On the host PC** — enable IP forwarding and NAT so traffic from the robot subnet (`192.168.123.0/24`) is forwarded out through your internet-facing interface:
+
+```bash
+./helper_scripts/nat_host.sh <host_web_interface> <robot_web_interface>
+```
+
+| Argument | Description | Example |
+|----------|-------------|---------|
+| `host_web_interface` | Interface with internet access | `eno1`, `wlan0` |
+| `robot_web_interface` | Interface connected to the robot | `eno2`, `enp3s0` |
+
+Find your interface names with `ip link` or `ip addr`. Use the same interface you pass to `setup_uri.sh` as `robot_web_interface`.
+
+**2. On the robot** (via SSH) — point the default route and DNS at the host PC:
+
+```bash
+./helper_scripts/nat_robot.sh <host_ip>
+```
+
+| Argument | Description | Example |
+|----------|-------------|---------|
+| `host_ip` | Host PC IP on the robot subnet | `192.168.123.200` |
+
+**3. Verify** connectivity from the robot:
+
+```bash
+ping -c 2 8.8.8.8       # test connectivity
+ping -c 2 google.com    # test DNS
+```
+
+Run either script with `--help` for usage details. These changes are temporary and reset on reboot.
+
+
 ### Docker (recommended)
 We prepare two docker images to build and run the package. One is for building in the teleoperation station, and the other is for running in the robot. Both images
 are located in the `docker` folder. You can build and run the images with the provided scripts.
