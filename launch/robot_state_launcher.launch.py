@@ -81,12 +81,13 @@ def generate_launch_description():
             arguments=['0','0','0','0','0','0','mid360_link','livox_frame']
         ),
 
-        Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            name='pelvis_to_base_link_tf',
-            arguments=['0','0','0','0','0','0','base_link','pelvis']
-        ),
+        # parent -> child
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='pelvis_to_base_link_tf',
+        #     arguments=['0','0','0','0','0','0','pelvis','base_link']
+        # ),
 
         Node(
             package="robot_state_publisher",
